@@ -400,6 +400,7 @@
 		}
     }
 
+
 	void CDM::initializeEnvironment(int numSensors, vector<float> baselineValues)
 	{
 //		set mu/sigma values for two sensors for now, this will need extending later

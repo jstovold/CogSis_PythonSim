@@ -320,3 +320,12 @@ float CDM_Init::get_temp_reading() {
   pc->printf("CDM_Init::get_temp_reading(); \r\n");
   return temperature;
 }
+
+
+int CDM_Init::get_num_agents() {
+  return cdm->agents.size();
+}
+
+vector<Agent*> CDM_Init::get_agents() {
+  return cdm->agents;
+}

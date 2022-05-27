@@ -36,9 +36,9 @@ class CDM
 	int countNumberAgentsInRadius(float centreX, float centreY, float radius);
 	Agent* getClosestAgentInRadius(float radius, int id);
 
-	void displayEnvironment(int xlimit, int ylimit, Serial* pc);
-	void printAllAgentXYPos(Serial *pc);
-	
+	void displayEnvironment(int xlimit, int ylimit, Serial* pc); 
+	void printAllAgentXYPos(Serial *pc); 
+
 	void updateEnvironment(vector<float> sensorValues);
 	void initializeEnvironment(int, vector<float>);
 	void calibrateSensorValues(vector<float>);

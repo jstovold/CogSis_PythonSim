@@ -38,5 +38,35 @@ extern "C" {
     return true;
   }
 
+  int getNumAgents(CDM_Init* cdm) {
+    return cdm->get_num_agents();
+  }
+
+  float* getCurrentXY(CDM_Init* cdm) {
+    vector<Agent*> agents = cdm->get_agents();
+    static float returnArr[30];
+    for (int a = 0; a < 30; a+=2) {
+      Agent *thisAgent 	= agents[a/2];
+      returnArr[a]     	= thisAgent->xcor;
+      returnArr[a + 1] 	= thisAgent->ycor;
+    }
+    return returnArr;    
+  }
+
+/*
+  float* getCurrentXY(CDM_Init* cdm) {
+    // yes, I'm aware how awful this memory management is, but I don't care right now
+    vector<Agent*> agents = cdm->get_agents();
+    int numAgents = agents.size();
+    float* returnArr = (float*)malloc(sizeof(float) * numAgents * 2);
+    for (int a = 0; a < numAgents * 2; a+=2) {
+      Agent *thisAgent 	= agents[a/2];
+      returnArr[a]     	= thisAgent->xcor;
+      returnArr[a + 1] 	= thisAgent->ycor;
+    }
+    return returnArr;
+  }
+*/
+
 }
 

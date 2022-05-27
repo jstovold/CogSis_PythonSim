@@ -30,6 +30,8 @@ class CDM_Init
     void temperature_ticker_func();
     void printEnv();
 
+    int get_num_agents();
+    vector<Agent*> get_agents();
 };
 
 
