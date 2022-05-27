@@ -131,11 +131,13 @@ void CDM_Init::cdm_ticker_func() {
         cLED = GREEN;
     }
 
+//    printEnv();	
+
     if (DEBUG_OUTPUT) {pc->printf("avoidTemp:\t%s\r\n", avoidTemp ? "true" : "false");}
     if (DEBUG_OUTPUT) {pc->printf("highTemp:\t%s\r\n", highTemp ? "true" : "false");}
     if (DEBUG_OUTPUT) {pc->printf("wantCharge:\t%s\r\n", wantCharge ? "true" : "false");}
     if (DEBUG_OUTPUT) {pc->printf("needCharge:\t%s\r\n", needCharge ? "true" : "false");}
-
+  //  if (DEBUG_OUTPUT && (cdm->timestep % 5 == 0)) { printEnv(); }
 }
 
 

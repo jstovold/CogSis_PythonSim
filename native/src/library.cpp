@@ -44,11 +44,12 @@ extern "C" {
 
   float* getCurrentXY(CDM_Init* cdm) {
     vector<Agent*> agents = cdm->get_agents();
-    static float returnArr[30];
-    for (int a = 0; a < 30; a+=2) {
-      Agent *thisAgent 	= agents[a/2];
+    static float returnArr[45];
+    for (int a = 0; a < 45; a+=3) {
+      Agent *thisAgent 	= agents[a/3];
       returnArr[a]     	= thisAgent->xcor;
       returnArr[a + 1] 	= thisAgent->ycor;
+      returnArr[a + 2]  = thisAgent->heading;
     }
     return returnArr;    
   }

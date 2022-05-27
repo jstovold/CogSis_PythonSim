@@ -12,6 +12,7 @@ class CDM;
 class CDM_Init 
 {
     Serial* pc;
+
   public:
     ~CDM_Init();
     float get_charge_reading();

@@ -1,5 +1,6 @@
-import turtle as robotTurtle
-import turtle2 as cdmTurtle
+import pyCDM
+import turtle2 as robotTurtle
+import turtle as cdmTurtle
 import time
 import threading
 
@@ -8,16 +9,49 @@ class CogSisTurtle(robotTurtle.Turtle):
     super.__init__()
   
 class CDMEnv():
-  _screen = None
-  _cdm    = None
+  _screen 	= None
+  _scale	= 1.0
+  _turtles	= []
+  _cdm 		= None
+  _tickRate 	= 5
+  _ticks	= 0
+  
   def __init__(self, scale = 1.0):
-    _screen = cdmTurtle.Screen().setup(width  = 140 * scale,
-				       height = 140 * scale, 
-				       startx = 250 * scale, 
-				       starty = None)
-    
+    self._screen  = cdmTurtle.Screen().setup(width  = 140 * scale,
+					     height = 140 * scale, 
+					     startx = 250 * scale, 
+					     starty = None)
+    self._scale = scale
+    #cdmTurtle.mode('logo')
+    self._cdm 	  = pyCDM.pyCDM('/Users/jamesstovold/Documents/Code/CDM_PythonSim/native/target/libCDMSim.so')
+    self._ticks   = 0
+    i = 0
+    returnArr = self._cdm.getCurrentXY()
+    for x,y,h in returnArr:
+      print(x * scale,y * scale, h)
+      turtle = cdmTurtle.Turtle()
+      turtle.penup()
+      turtle.setpos(x * scale,y * scale)
+      turtle.setheading(h)
+      self._turtles.append(turtle)
+      
+  def __del__(self):
+    del self._cdm
 
+  def tick(self):
+    for t in range(self._tickRate):
+      self._cdm.tick()
+      self._ticks += 1
 
+    self.drawEnvironment()
+
+  def drawEnvironment(self):
+    coordList = self._cdm.getCurrentXY()
+    i = 0
+    for x,y,h in coordList:
+      self._turtles[i].setpos(x * self._scale, y * self._scale)
+      self._turtles[i].setheading(h)
+      i += 1
 
 
 
@@ -42,18 +76,22 @@ def robotThread():
     time.sleep(1)
 
 def cdmThread():
-  while(1):
-    time.sleep(1)
-
+  pass
 def main():
-  #  t1 = threading.Thread(target=robotThread)
-  #  t2 = threading.Thread(target=cdmThread)
-  screen_scale = 4.0
-  cdmenv   = CDMEnv(screen_scale);
-  robotenv = RobotEnv(screen_scale);
+    # robotenv = RobotEnv(4.0);
 
-  while (1):
-    time.sleep(1)
+    # t1 = threading.Thread(target=robotThread)
+    # t2 = threading.Thread(target=cdmThread)
+    # t1.start()
+    # t2.start()
+
+    cdmenv   = CDMEnv(4.0);
+
+    while(1):
+      cdmenv.tick()  
+
+
+
 
 if __name__ == "__main__":
   main()

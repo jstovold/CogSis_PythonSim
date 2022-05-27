@@ -7,14 +7,16 @@
 ## ==
 
 from ctypes import *
+PI = 3.141592
+
 class pyCDM():
   _cdm = None
   _lib  = None
   n_agents = 0
-  def __init__(self):
-    self._lib = cdll.LoadLibrary('../../native/target/libCDMSim.so')
+  def __init__(self, lib_location = '../../native/target/libCDMSim.so'):
+    self._lib 				= cdll.LoadLibrary(lib_location)
     self._lib.createCDM.restype 	= POINTER(c_int)
-    self._cdm = self._lib.createCDM()
+    self._cdm 				= self._lib.createCDM()
 
     self._lib.setRgbReadings.restype 	= c_bool 
     self._lib.getRgbReadings.restype 	= POINTER(c_int * 3)
@@ -23,8 +25,8 @@ class pyCDM():
     self._lib.destroyCDM.restype	= c_bool
     self._lib.getNumAgents.restype	= c_int
 
-    self.n_agents = self._lib.getNumAgents(self._cdm)
-    self._lib.getCurrentXY.restype	= POINTER(c_float * 30) #self.n_agents * 2)
+    self.n_agents 			= self._lib.getNumAgents(self._cdm)
+    self._lib.getCurrentXY.restype	= POINTER(c_float * 45) #self.n_agents * 3)
     
 
   def __del__(self):
@@ -47,20 +49,29 @@ class pyCDM():
   def tick(self):
     return(self._lib.tick(self._cdm))
 
+  def convertHeading(self, rads):
+    degs = rads * 180.0 / PI
+    if degs < 0:
+      degs = 360.0 + degs
+    return(degs)
+
   def getCurrentXY(self):
     xy_ptr = self._lib.getCurrentXY(self._cdm)
     xy_list = [i for i in xy_ptr.contents]
     returnList = []
-
-    ff = False
-    saved = None
+    ff = 0
+    y = None
+    x = None
     for i in xy_list:
-      if ff:
-        returnList.append((saved, i))
-        ff = False
-      else:
-        saved = i
-        ff = True
+      if ff == 2:
+        returnList.append((x, y, self.convertHeading(i)))
+        ff = 0
+      elif ff == 1:
+        y = i
+        ff += 1
+      else:  # ff == 0
+        x = i
+        ff += 1
     return(returnList)
 
 def main():
