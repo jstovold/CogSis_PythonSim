@@ -31,8 +31,8 @@ class CDM
 	void go(int numTicksToGoFor, Serial *pc);
 	void tick();
 
-	vector<Agent*> getAllAgentsInRadius(float radius, bool includeMe, int id);
-	vector<Agent*> getOtherAgentsInRadius(float radius, int id);
+	vector<Agent*>* getAllAgentsInRadius(float radius, bool includeMe, int id);
+	vector<Agent*>* getOtherAgentsInRadius(float radius, int id);
 	int countNumberAgentsInRadius(float centreX, float centreY, float radius);
 	Agent* getClosestAgentInRadius(float radius, int id);
 

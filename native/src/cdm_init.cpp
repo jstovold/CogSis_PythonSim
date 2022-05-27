@@ -55,7 +55,7 @@ CDM_Init::~CDM_Init() {
 void init_local()
 {
   numAgents 	= 15;
-  temperature 	= 10.0f;
+  temperature 	= 20.0f;
   charge	= 5.0f;
   highTemp	= false;
   avoidTemp	= false;
@@ -84,7 +84,7 @@ void CDM_Init::initialise_cdm() {
   sensorValues.push_back(charge);
   cdm->initializeEnvironment(2, sensorValues);
   charge      = 3.0f;
-  temperature = 10.0f;
+  temperature = 20.0f;
 
   // print out the environment to show that we are set up and ready to go
   printEnv();

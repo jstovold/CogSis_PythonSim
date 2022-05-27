@@ -22,9 +22,15 @@ extern "C" {
   }
   
   float* getChargeTemp(CDM_Init* cdm) {
+    static float returnArr[2];
+    returnArr[0] = cdm->get_charge_reading();
+    returnArr[1] = cdm->get_temp_reading();
+    return returnArr;
   }
 
   bool tick(CDM_Init* cdm)  {
+    cdm->cdm_ticker_func();
+    return true;
   }
 
   bool destroyCDM(CDM_Init* cdm) {

@@ -197,7 +197,7 @@
 		timestep++;
     }
 
-    vector<Agent*> CDM::getAllAgentsInRadius(float radius, bool includeMe, int id)
+    vector<Agent*>* CDM::getAllAgentsInRadius(float radius, bool includeMe, int id)
     {
 	Agent *thisAgent = agents[id];
 //	float minX = thisAgent->xcor - radius;
@@ -207,7 +207,7 @@
 //	
 
 
-	vector<Agent*> neighbours;
+	vector<Agent*>* neighbours = new vector<Agent*>();
 	for (int a = 0; a < numAgents; a++)
 	{
 	  if (includeMe) 
@@ -215,7 +215,7 @@
 	    if (thisAgent->distanceToAgent(agents[a]) <= radius)
 	    //if ((agents[a].xcor >= minX && agents[a].xcor <= maxX) && (agents[a].ycor >= minY && agents[a].ycor <= maxY) )
 	    {
-	      neighbours.push_back(agents[a]);
+	      neighbours->push_back(agents[a]);
 	    }
 	  }
 
@@ -223,14 +223,14 @@
 	  {
 	    if (thisAgent->distanceToAgent(agents[a]) <= radius)
 	    {
-	      neighbours.push_back(agents[a]);
+	      neighbours->push_back(agents[a]);
 	    }
 	  }
 	}
 	return neighbours;
     }
 
-    vector<Agent*> CDM::getOtherAgentsInRadius(float radius, int id)
+    vector<Agent*>* CDM::getOtherAgentsInRadius(float radius, int id)
     {
 		return getAllAgentsInRadius(radius, false, id);
     }
@@ -248,15 +248,15 @@
 
     Agent* CDM::getClosestAgentInRadius(float radius, int id)
     {
-		vector<Agent*> allAgentsInRadius = getOtherAgentsInRadius(radius, id);
+		vector<Agent*>* allAgentsInRadius = getOtherAgentsInRadius(radius, id);
 		Agent *thisAgent = agents[id];
-		if (allAgentsInRadius.size() > 0)
+		if (allAgentsInRadius->size() > 0)
 		{
 		  int closest = -1;
 		  float closestDist = numeric_limits<float>::max();
-		  for (int a = 0; a < allAgentsInRadius.size(); a++)
+		  for (int a = 0; a < allAgentsInRadius->size(); a++)
 		  {
-		    float dist = thisAgent->distanceToAgent(allAgentsInRadius[a]);
+		    float dist = thisAgent->distanceToAgent((*allAgentsInRadius)[a]);
 		    if (dist < closestDist)
 		    {
 		      closest 		= a;

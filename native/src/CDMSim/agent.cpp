@@ -43,11 +43,14 @@
     {
 		// need to clear neighbours out appropriately
 		neighbours.clear();
-		neighbours = environment->getOtherAgentsInRadius(agentVision, id);
+		vector<Agent*>* retVal = environment->getOtherAgentsInRadius(agentVision, id);
+		neighbours = *retVal; // copies
 		if (neighbours.size() > 0)
 		{
 		  nearestNeighbour = environment->getClosestAgentInRadius(agentVision, id);
 		}
+		delete retVal;
+		
     }
 
 
