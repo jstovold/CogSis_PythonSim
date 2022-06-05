@@ -1,4 +1,5 @@
 import pyCDM
+import cmm
 import turtle2 as robotTurtle
 import turtle as cdmTurtle
 import time
@@ -30,6 +31,7 @@ class CDMEnv():
     for x,y,h in returnArr:
       print(x * scale,y * scale, h)
       turtle = cdmTurtle.Turtle()
+      turtle.speed(0)     # disable animation
       turtle.penup()
       turtle.setpos(x * scale,y * scale)
       turtle.setheading(h)
@@ -59,37 +61,86 @@ class CDMEnv():
 class RobotEnv():
   _screen = None
   _robot  = None
+  _ticks  = 0
+  _cmm    = None
+  
+  # need to store the turtle's environment in a bitmap image, then set that image as the turtle background to show what 
+  # is going on to the user
+
+  avoidTemp  = False
+  wantCharge = False
+  charging   = False
+  cooling    = False
+
   def __init__(self, scale = 1.0):
-    _screen = robotTurtle.Screen().setup(width  = 200 * scale, 
-					 height = 140 * scale, 
-					 startx = 25  * scale, 
-					 starty = None)
-    _robot = robotTurtle.Turtle()
+    self._screen = robotTurtle.Screen().setup(width  = 200 * scale, 
+					      height = 140 * scale, 
+					      startx = 25  * scale, 
+					      starty = None)
+    self._robot = robotTurtle.Turtle()
+    self._cmm   = cmm(2, 3)
+    self._ticks = 0;    
+
+
+  def train(self):
+    pass
+
+  def tick(self):
+    # check cdm output
+    # pass to cmm input
+    # threshold cmm output
+    # pass through RGBs to wheels
+
+    self.poll_sensors()
+    # pass sensor readings to CDM
+    # read current output from CDM
+    inputs    = [self.avoidTemp * -1, self.wantCharge * 1]
+    outputs   = self._cmm.recall(inputs)
+    behaviour = self._cmm.thresholdResults(outputs, 1, False)
+    seekRed   = behaviour[0]
+    seekGreen = behaviour[1]
+    seekBlue  = behaviour[2]
+
+    behaviour = self._cmm.thresholdResults(outputs, 1, True)
+    fleeRed   = behaviour[0]
+    fleeGreen = behaviour[1]
+    fleeBlue  = behaviour[2]
     
+    self.move(seekRed, seekGreen, seekBlue, fleeRed, fleeGreen, fleeBlue)
+
+    self._ticks += 1
+
+  def poll_sensors(self):
+    # store current rgb values
+    # get new rgb values
+    # pass to cdm
+    # check IR sensors for walls
+    pass
+
+  def move(self, seekRed, seekGreen, seekBlue, fleeRed, fleeGreen, fleeBlue):
+    pass
+
+  def avoid_collisions(self):
+    pass
+
+  def update_leds(self):
+    # check led status
+    # update colour of turtle to match
+    pass
 
 
 
 
 
-def robotThread():
-  while(1):
-    time.sleep(1)
 
-def cdmThread():
-  pass
 def main():
-    # robotenv = RobotEnv(4.0);
-
-    # t1 = threading.Thread(target=robotThread)
-    # t2 = threading.Thread(target=cdmThread)
-    # t1.start()
-    # t2.start()
 
     cdmenv   = CDMEnv(4.0);
+    robotEnv = RobotEnv(4.0);
 
     while(1):
       cdmenv.tick()  
-
+      robotEnv.tick()
 
 
 

@@ -122,6 +122,7 @@ import warnings
 from os.path import isfile, split, join
 from copy import deepcopy
 from tkinter import simpledialog
+from PIL import Image as PIL_Image, ImageTk as PIL_ImageTk
 
 _tg_classes = ['ScrolledCanvas', 'TurtleScreen', 'Screen',
                'RawTurtle', 'Turtle', 'RawPen', 'Pen', 'Shape', 'Vec2D']
@@ -485,6 +486,14 @@ class TurtleScreenBase(object):
         """
         return TK.PhotoImage(file=filename, master=self.cv)
 
+    def _imageFromPixels(self, pixelImage):
+        """return an image object containing the
+        imagedata from a PIL Image.
+        """
+        
+        img = pixelImage.resize((pixelImage.width * self.xscale, pixelImage.height * self.yscale))
+        return PIL_ImageTk.PhotoImage(img, master=self.cv)
+	
     def __init__(self, cv):
         self.cv = cv
         if isinstance(cv, ScrolledCanvas):
@@ -1486,10 +1495,16 @@ class TurtleScreen(TurtleScreenBase):
         """
         if picname is None:
             return self._bgpicname
-        if picname not in self._bgpics:
+        if isinstance(picname, PIL_Image.Image):
+            self._bgpics["custom"] = self._imageFromPixels(picname)
+            self._setbgpic(self._bgpic, self._bgpics["custom"])
+            self._bgpicname = "custom"
+        else:
+          if picname not in self._bgpics:
             self._bgpics[picname] = self._image(picname)
-        self._setbgpic(self._bgpic, self._bgpics[picname])
-        self._bgpicname = picname
+          self._setbgpic(self._bgpic, self._bgpics[picname])
+          self._bgpicname = picname
+
 
     def screensize(self, canvwidth=None, canvheight=None, bg=None):
         """Resize the canvas the turtles are drawing on.

@@ -199,7 +199,11 @@
 
     vector<Agent*>* CDM::getAllAgentsInRadius(float radius, bool includeMe, int id)
     {
-	Agent *thisAgent = agents[id];
+        
+//        if (agents.empty() || id < 0 || id > numAgents) { return NULL; }
+
+
+	Agent *thisAgent = agents.at(id);
 //	float minX = thisAgent->xcor - radius;
 //	float minY = thisAgent->ycor - radius;
 //	float maxX = thisAgent->xcor + radius;
@@ -212,18 +216,18 @@
 	{
 	  if (includeMe) 
 	  {
-	    if (thisAgent->distanceToAgent(agents[a]) <= radius)
+	    if (thisAgent->distanceToAgent(agents.at(a)) <= radius)
 	    //if ((agents[a].xcor >= minX && agents[a].xcor <= maxX) && (agents[a].ycor >= minY && agents[a].ycor <= maxY) )
 	    {
-	      neighbours->push_back(agents[a]);
+	      neighbours->push_back(agents.at(a));
 	    }
 	  }
 
 	  if ( (!includeMe) && a != id)
 	  {
-	    if (thisAgent->distanceToAgent(agents[a]) <= radius)
+	    if (thisAgent->distanceToAgent(agents.at(a)) <= radius)
 	    {
-	      neighbours->push_back(agents[a]);
+	      neighbours->push_back(agents.at(a));
 	    }
 	  }
 	}
