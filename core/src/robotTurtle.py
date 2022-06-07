@@ -7,19 +7,21 @@ class robotTurtle(turtle.Turtle):
   _img    = None
   _pixels = None
   _scale  = 1.0
-  def __init__(self, width=400,height=300, scale=1.0):
+  def __init__(self, width=400,height=300, scale=1.0, startx = 0, starty = 0):
     super().__init__()
     self._scale = scale
-    self._screen.setup(width * self._scale,height * self._scale)
+    self._screen.mode('logo')
+    self._screen.setup(width * self._scale,height * self._scale, startx = startx, starty = starty)
     w = super()._screen.window_width()
     h = super()._screen.window_height()
-    print((w,h))
+    self.penup()
 
     # set up background
     self._img    = Image.new('RGB', (w, h), 'black')
     self._pixels = self._img.load()
     self._screen.bgpic(self._img)
     self.color("white")
+    self._screen.colormode(255)
     self.turtlesize(self._scale)
 
   def updateBackground(self):
@@ -56,6 +58,13 @@ class robotTurtle(turtle.Turtle):
 
   def fd(self,val):
     super().fd(val * self._scale)
+
+  def xcor(self):
+    return(super().xcor() / self._scale)
+
+  def ycor(self):
+    return(super().ycor() / self._scale)
+
 
   # these functions convert between the canvas and turtle coordinate systems
   def convertToCanvas(self, x,y):
@@ -102,9 +111,6 @@ def main():
   robot = robotTurtle(224,108, 4.0)
   robot.addLightSource((0,10), 50, 'red')
   robot.addLightSource((224,50), 50, 'blue')
-  robot.setValueAt(4,9,(0,1,12))
-  print(robot.valueAt(4,9))
-  print(robot.valueAt(5,9))
   robot.updateBackground()
   while 1:
    robot.fd(1)

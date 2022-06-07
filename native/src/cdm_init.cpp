@@ -13,11 +13,15 @@ CDM *cdm;
 // 1 green/orange combo spot
 // workshop lights ON
 // lab lights OFF (except far ceiling lights on lowest level)
-#define CHARGING_THRESHOLD      450
-#define TEMPERATURE_THRESHOLD   250
+//#define CHARGING_THRESHOLD      450
+//#define TEMPERATURE_THRESHOLD   250
 #define RED_LIGHT_THRESHOLD     400
 #define GREEN_LIGHT_THRESHOLD   100000          // reality gap... (non-perfect filters etc.)
 #define BLUE_LIGHT_THRESHOLD    30000
+
+// simulation environment (values between 0 and 255)
+#define CHARGING_THRESHOLD      120
+#define TEMPERATURE_THRESHOLD   100
 
 // temperature and charge light colours
 #define CHARGE_LIGHT_COLOUR     RED
@@ -199,6 +203,8 @@ void CDM_Init::temperature_ticker_func()
 
     if (temperature > 25.0f)
     {
+        highTemp = true;
+
         if (temperature > 30.0f)
         {
             if (temperature > 35.0f)
@@ -259,7 +265,6 @@ void CDM_Init::temperature_ticker_func()
         else
         { // 25
             //piswarm.play_tune("MSARRRR", 5);
-            highTemp = true;
         }
     }
     else
@@ -331,3 +336,12 @@ int CDM_Init::get_num_agents() {
 vector<Agent*> CDM_Init::get_agents() {
   return cdm->agents;
 }
+
+bool CDM_Init::get_want_charge() {
+  return wantCharge;
+}
+
+bool CDM_Init::get_avoid_temp() {
+  return avoidTemp;
+}
+

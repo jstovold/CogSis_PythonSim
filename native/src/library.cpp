@@ -28,6 +28,14 @@ extern "C" {
     return returnArr;
   }
 
+  bool* getCDMOutput(CDM_Init* cdm) {
+    static bool returnArr[2];
+    returnArr[0] = cdm->get_want_charge();
+    returnArr[1] = cdm->get_avoid_temp();
+    return returnArr;
+  }
+
+
   bool tick(CDM_Init* cdm)  {
     cdm->cdm_ticker_func();
     return true;

@@ -8,19 +8,19 @@ std::string Serial::getTime() {
 }
 
 Serial::Serial() {
-//  _logFilePath 		= "outputlog.log" + getTime();
-//  _logFile 		= std::fopen(_logFilePath.c_str(), "w+");
+  _logFilePath 		= "outputlog.log" + getTime();
+  _logFile 		= std::fopen(_logFilePath.c_str(), "w+");
 }
 
 Serial::Serial(std::string logFilePath) {
-//  _logFilePath 		= logFilePath + getTime();
-//  _logFile 		= std::fopen(_logFilePath.c_str(), "w+");
+  _logFilePath 		= logFilePath + getTime();
+  _logFile 		= std::fopen(_logFilePath.c_str(), "w+");
   
 }
 
 Serial::~Serial() {
-//  std::fflush(_logFile);
-//  std::fclose(_logFile);
+  std::fflush(_logFile);
+  std::fclose(_logFile);
 }
 
 
@@ -28,11 +28,11 @@ int Serial::printf(const char* format, ...) {
   // catch printf commands and direct output to log file
   va_list args;
   va_start(args, format);
-  //int a = std::vfprintf(_logFile, format, args);
+  int a = std::vfprintf(_logFile, format, args);
   va_end(args);
-  //std::fflush(_logFile);
-//  return(a);
-  return(0);
+  std::fflush(_logFile);
+  return(a);
+//  return(0);
 }
 
 

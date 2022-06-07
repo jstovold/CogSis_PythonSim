@@ -60,7 +60,7 @@ class cmm():
 
   def thresholdResults(self, O, theta, invert=False):
     outputArr = [False] * self._outputs
-    if !invert:
+    if not invert:
       for o in range(self._outputs):
         outputArr[o] = (O[o] <= -theta)
     else:

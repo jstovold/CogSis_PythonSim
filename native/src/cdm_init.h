@@ -15,6 +15,9 @@ class CDM_Init
 
   public:
     ~CDM_Init();
+
+    bool get_want_charge();
+    bool get_avoid_temp();
     float get_charge_reading();
     float get_temp_reading();
     volatile int rgb_readings[4];

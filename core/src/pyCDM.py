@@ -21,6 +21,7 @@ class pyCDM():
     self._lib.setRgbReadings.restype 	= c_bool 
     self._lib.getRgbReadings.restype 	= POINTER(c_int * 3)
     self._lib.getChargeTemp.restype  	= POINTER(c_float * 2)
+    self._lib.getCDMOutput.restype      = POINTER(c_bool * 2)
     self._lib.tick.restype		= c_bool
     self._lib.destroyCDM.restype	= c_bool
     self._lib.getNumAgents.restype	= c_int
@@ -44,6 +45,11 @@ class pyCDM():
   def getChargeTemp(self):
     ct_ptr = self._lib.getChargeTemp(self._cdm)
     returnList = [i for i in ct_ptr.contents]
+    return(returnList)
+
+  def getCDMOutput(self):
+    cdm_ptr = self._lib.getCDMOutput(self._cdm)
+    returnList = [i for i in cdm_ptr.contents]
     return(returnList)
     
   def tick(self):
