@@ -1,6 +1,7 @@
 import pyCDM
 import cmm
-import turtle as cdmTurtle
+import turtle3 as cdmTurtle
+import patch_turtle_image
 import robotTurtle 
 import time
 import threading
@@ -16,13 +17,20 @@ class CDMEnv():
   _cdm 		= None
   _tickRate 	= 5
   _ticks	= 0
-  
-  def __init__(self, scale = 1.0):
-    self._screen  = cdmTurtle.Screen().setup(width  = 140 * scale,
-					     height = 140 * scale, 
-					     startx = 250 * scale, 
-					     starty = None)
+  _arenaWidth   = 0  # these store the scaled size of the arena
+  _arenaHeight  = 0 
+  def __init__(self, arenaWidth = 60, arenaHeight = 60, scale = 1.0):
+    self._screen = cdmTurtle.Screen().setup(width = arenaWidth * scale, 
+					    height = arenaHeight * scale,
+					    startx = 250 * scale, 
+					    starty = None)
+    self._arenaWidth  = arenaWidth * scale
+    self._arenaHeight = arenaHeight * scale
     self._scale = scale
+    llx, lly = (0, 0)
+    urx, ury = (self._arenaWidth, self._arenaHeight)
+    cdmTurtle.setworldcoordinates(llx, lly, urx, ury)
+    cdmTurtle.bgpic('core/src/bgimage.jpg')
     #cdmTurtle.mode('logo')
     self._cdm 	  = pyCDM.pyCDM('/Users/jamesstovold/Documents/Code/CDM_PythonSim/native/target/libCDMSim.so')
     self._ticks   = 0
@@ -31,6 +39,7 @@ class CDMEnv():
     for x,y,h in returnArr:
       print(x * scale,y * scale, h)
       turtle = cdmTurtle.Turtle()
+      turtle.color("white")
       turtle.speed(0)     # disable animation
       turtle.penup()
       turtle.setpos(x * scale,y * scale)
@@ -243,7 +252,7 @@ class RobotEnv():
 
 
 def main():
-    cdmEnv   = CDMEnv(4.0);
+    cdmEnv   = CDMEnv(60, 60, 4.0);
     robotEnv = RobotEnv(cdmEnv, scale = 4.0, startx = 25);
 
     while(1):
