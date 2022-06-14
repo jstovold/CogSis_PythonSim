@@ -6,6 +6,13 @@ import robotTurtle
 import time
 import threading
 
+FORWARD_SPEED = 10
+SLEEP_TIME    = 1
+
+RED   = 0
+GREEN = 1
+BLUE  = 2
+
 #class CogSisTurtle(robotTurtle.Turtle):
 #  def __init__(self):
 #    super.__init__()
@@ -79,6 +86,7 @@ class RobotEnv():
   # need to store the turtle's environment in a bitmap image, then set that image as the turtle background to show what 
   # is going on to the user
 
+  all_stop   = False
   avoidTemp  = False
   wantCharge = False
   charging   = False
@@ -123,6 +131,8 @@ class RobotEnv():
     self.poll_sensors()
     # pass sensor readings to CDM
     # read current output from CDM
+    if self._ticks > 5 and self.all_stop:
+      return
 
     self.avoid_collisions()
       
@@ -164,13 +174,144 @@ class RobotEnv():
 
     # get current state of cdm
     self.wantCharge, self.avoidTemp = self._cdm._cdm.getCDMOutput()
+
     # check IR sensors for walls
-    pass
+    #pass
+    
+    # get current charge of robot (yes, I know this should be in python, but it's already been written in C++ and is 
+    # running, so may as well use it!)
+    charge, temp = self._cdm._cdm.getChargeTemp()
+
+    if charge < 0.1:
+      # battery dead
+      self.all_stop = True
+      self.centre_led(255,255,0) # yellow
+
+    if temp > 55:
+      # overheated
+      self.all_stop = True
+      self.centre_led(0,255,255) # cyan
 
 
 
   def move(self, seekRed, seekGreen, seekBlue, fleeRed, fleeGreen, fleeBlue):
-    self._robot.fd(10.0)
+    # this method needs writing and calibrating according to the real robot characteristics (see page 100-101 of 
+    # thesis)
+    print("move")
+    # need chromotaxis algorithm implementing here, then we can calibrate according to empirical data
+    if seekRed:
+      self.seek_colour(RED)
+    elif seekGreen:
+      self.seek_colour(GREEN)
+    elif seekBlue:
+      self.seek_colour(BLUE)
+    elif fleeRed:
+      self.flee_colour(RED)
+    elif fleeGreen:
+      self.flee_colour(GREEN)
+    elif fleeBlue:
+      self.flee_colour(BLUE)
+    else:
+      self._robot.fd(1.0)
+    while (self.charging and self.wantCharge) or (self.cooling and self.avoidTemp): 
+      time.sleep(SLEEP_TIME)
+
+  def seekflee_colour_aux(self, colourToSeek, invert=False):
+    last = self.get_last_value(colourToSeek)
+    now  = self.get_colour(colourToSeek, invert)
+
+    if not invert:
+      if now > last:
+        self._robot.fd(FORWARD_SPEED)
+        time.sleep(SLEEP_TIME)
+      else:
+        self.check_direction(colourToSeek, invert)
+    else:
+      if now < last:
+        self._robot.fd(FORWARD_SPEED)
+        time.sleep(SLEEP_TIME)
+      else:
+        self.check_direction(colourToSeek, invert)
+
+
+  def seek_colour(self, colourToSeek):
+    self.seekflee_colour_aux(colourToSeek, False)
+
+  def flee_colour(self, colourToFlee):
+    self.seekflee_colour_aux(colourToFlee, True)
+
+  def get_last_value(self, colourToSeek):
+    return self.last_rgb[colourToSeek]
+
+  def get_colour(self, colourToSeek, invert=False):
+    if colourToSeek == RED:
+      if inverted: self.centre_led(0,255,255)
+      else:        self.centre_led(255,0,0)
+    elif colourToSeek == GREEN:
+      if inverted: self.centre_led(255,0,255)
+      else:        self.centre_led(0,255,0)
+    elif colourToSeek == BLUE:
+      if inverted: self.centre_led(255,255,0)
+      else:        self.centre_led(0,0,255)
+
+    self.poll_sensors() # update current and last RGB values
+    return self.rgb[colourToSeek]
+
+  def check_direction(self, colourToSeek, invert=False):
+    BRANCH_LENGTH  = 10
+    BRANCH_ANGLE   = 35
+
+    this_heading = self._robot.heading
+    start = self.get_colour(colourToSeek, invert)
+
+    self._robot.lt(BRANCH_ANGLE)
+    self._robot.fd(BRANCH_LENGTH)
+    left  = self.get_colour(colourToSeek, invert)
+
+    self._robot.bk(BRANCH_LENGTH)
+    self._robot.rt(BRANCH_ANGLE)
+    self._robot.fd(BRANCH_LENGTH)
+    right = self.get_colour(colourToSeek, invert)
+      
+#    self._robot.bk(BRANCH_LENGTH)
+    # if we run the above, we should be back where we started, facing the same direction, but we don't because if 
+    # this is the direction we want to go in then it doesn't make sense to reverse again
+
+    if not invert:      
+      if start > left and start > right:
+        # turn around
+        self._robot.bk(BRANCH_LENGTH)
+        self._robot.lt(180)
+        self._robot.fd(FORWARD_SPEED)
+      else:
+        if left > right: # turn left
+          self._robot.bk(BRANCH_LENGTH)
+          self._robot.lt(BRANCH_ANGLE)
+          self._robot.fd(FORWARD_SPEED)
+        else:
+          self._robot.fd(FORWARD_SPEED)
+    else:
+      if start < left and start < right:
+        # turn around
+        self._robot.bk(BRANCH_LENGTH)
+        self._robot.lt(180)
+        self._robot.fd(FORWARD_SPEED)
+      else:
+        if left < right: # turn left
+          self._robot.bk(BRANCH_LENGTH)
+          self._robot.lt(BRANCH_ANGLE)
+          self._robot.fd(FORWARD_SPEED)
+        else:
+          self._robot.fd(FORWARD_SPEED)
+        
+
+
+
+
+
+
+
+
 
 
   def printChargeTemp(self):
@@ -192,8 +333,8 @@ class RobotEnv():
 
     right   = (w // 2) - b
     left    = -right
-    top  = (h // 2) - b
-    bottom     = -top
+    top     = (h // 2) - b
+    bottom  = -top
 
     print(x, y, left, right, top, bottom)
 

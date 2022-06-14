@@ -102,8 +102,14 @@ void CDM_Init::printEnv() {
 
 // this function is called every tick from NetLogo, CDM_SPEED defines how much faster the CDM runs than the NetLogo sim
 void CDM_Init::cdm_ticker_func() {
-    charge_ticker_func();
-    temperature_ticker_func();
+    // these tickers should not be run every tick, but instead should be run once every 2.25 seconds, where cdm should be 
+    // ticked once every 0.2 seconds 
+
+    // for the sake of simplicity, let's just run these once every 10 ticks
+    if (cdm->timestep % 10 == 0) {
+      charge_ticker_func();
+      temperature_ticker_func();
+    }
 
     pc->printf("CDM_Init::cdm_ticker_func();\r\n");
     cdm_sensorValues[0] = temperature;
