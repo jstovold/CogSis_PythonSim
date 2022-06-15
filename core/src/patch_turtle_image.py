@@ -1,4 +1,4 @@
-from turtle3 import TurtleScreenBase
+from turtle4 import TurtleScreenBase
 from PIL import ImageTk
 
 @staticmethod
