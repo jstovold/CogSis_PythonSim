@@ -16,6 +16,9 @@ class CDM_Init
   public:
     ~CDM_Init();
 
+    bool is_cooling();
+    bool is_charging();
+
     bool get_want_charge();
     bool get_avoid_temp();
     float get_charge_reading();

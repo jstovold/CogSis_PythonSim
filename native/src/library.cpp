@@ -35,6 +35,13 @@ extern "C" {
     return returnArr;
   }
 
+  bool* isChargingCooling(CDM_Init* cdm) {
+    static bool returnArr[2];
+    returnArr[0] = cdm->is_charging();
+    returnArr[1] = cdm->is_cooling();
+    return returnArr;
+  }
+
 
   bool tick(CDM_Init* cdm)  {
     cdm->cdm_ticker_func();

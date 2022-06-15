@@ -20,18 +20,24 @@ CDM *cdm;
 #define BLUE_LIGHT_THRESHOLD    30000
 
 // simulation environment (values between 0 and 255)
-#define CHARGING_THRESHOLD      120
-#define TEMPERATURE_THRESHOLD   100
+#define CHARGING_THRESHOLD      40
+#define TEMPERATURE_THRESHOLD   10
 
 // temperature and charge light colours
-#define CHARGE_LIGHT_COLOUR     RED
+#define CHARGE_LIGHT_COLOUR     BLUE
 #define TEMP_LIGHT_COLOUR       RED
 
 // temperature and charge parameters
-#define DISCHARGE_SPEED         0.02
-#define CHARGING_SPEED          0.05
+//#define DISCHARGE_SPEED         0.02
+//#define CHARGING_SPEED          0.05
+//#define TEMP_INCREASE_SPEED     1.8
+//#define TEMP_DECREASE_SPEED     0.8
+
+// deltas for non-conflict scenario
+#define DISCHARGE_SPEED         0.1
+#define CHARGING_SPEED          0.8
 #define TEMP_INCREASE_SPEED     1.8
-#define TEMP_DECREASE_SPEED     0.8
+#define TEMP_DECREASE_SPEED     0.5
 
 //Serial 	pc; // new Serial.h redirects this to a standard log file instead of the UART
 int	numAgents;
@@ -82,7 +88,10 @@ void CDM_Init::initialise_cdm() {
 
   // set up the environment, link to sensors...
   vector<float> sensorValues;
-  temperature = 10.0f;
+//  temperature = 10.0f;
+//  charge      = 5.0f;
+
+  temperature = 45.0f;
   charge      = 5.0f;
   sensorValues.push_back(temperature);
   sensorValues.push_back(charge);
@@ -163,7 +172,8 @@ void CDM_Init::charge_ticker_func()
     if (charge_light_level() > CHARGING_THRESHOLD)      // in charging station
     {
         charging = true;
-        charge = min((float)(charge + CHARGING_SPEED), 6.0f);              // upper limit on charge
+//        charge = min((float)(charge + CHARGING_SPEED), 6.0f);              // upper limit on charge
+        charge = min((float)(charge + CHARGING_SPEED), 15.0f);              // upper limit on charge
     }
     else
     {
@@ -351,3 +361,10 @@ bool CDM_Init::get_avoid_temp() {
   return avoidTemp;
 }
 
+bool CDM_Init::is_cooling() {
+  return cooling;
+}
+
+bool CDM_Init::is_charging() {
+  return charging;
+}

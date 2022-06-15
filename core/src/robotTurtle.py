@@ -56,12 +56,6 @@ class robotTurtle(turtle.Turtle):
       x_canv, y_canv = x,y
     self._pixels[x_canv, y_canv] = v
 
-  def fd(self,val):
-    super().fd(val * self._scale)
-
-  def bk(self, val):
-    super().bk(val * self._scale)
-  
 
 
   def xcor(self):

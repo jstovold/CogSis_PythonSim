@@ -47,7 +47,7 @@ class cmm():
       if Ik[i]:
         for o in range(self._outputs):
           if Ok[o]:
-            self._M[i * self._outputs + o] = true
+            self._M[i * self._outputs + o] = True
 
   def recall(self, Ir):
     outputArr = [False] * self._outputs
@@ -60,7 +60,7 @@ class cmm():
 
   def thresholdResults(self, O, theta, invert=False):
     outputArr = [False] * self._outputs
-    if not invert:
+    if invert:
       for o in range(self._outputs):
         outputArr[o] = (O[o] <= -theta)
     else:
