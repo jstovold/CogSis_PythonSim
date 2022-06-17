@@ -20,7 +20,7 @@ CDM *cdm;
 #define BLUE_LIGHT_THRESHOLD    30000
 
 // simulation environment (values between 0 and 255)
-#define CHARGING_THRESHOLD      40
+#define CHARGING_THRESHOLD      30
 #define TEMPERATURE_THRESHOLD   10
 
 // temperature and charge light colours
