@@ -1,2 +1,2 @@
-#!/bin/bash -x -e
+#!/bin/bash -xe
 mv outputlog.log* logs/

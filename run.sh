@@ -1,2 +1,2 @@
-#!/bin/bash -x -e
+#!/bin/bash -xe
 python3 core/src/CDMSim.py
