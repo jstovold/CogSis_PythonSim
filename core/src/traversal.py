@@ -47,9 +47,11 @@ class TraversalEnv():
 
 
   def initialise_robot(self):
-    randx = -75 * self._scale
-    randy = 30 * self._scale
-    randh = 30
+    min_x, max_x = -110, -80
+    min_y, max_y = -40, 40
+    randx = (random.random() * (min_x - max_x) + max_x) * self._scale
+    randy = (random.random() * (max_y - min_y) + min_y) * self._scale
+    randh = random.random() * 180
 
     self._robot.goto(randx, randy)
     self._robot.setheading(randh)
@@ -92,8 +94,8 @@ class TraversalEnv():
 
   def seekflee_colour_aux(self, colourToSeek, invert=False):
 
-    now  = self.get_colour(colourToSeek, invert)
     last = self.get_last_value(colourToSeek)
+    now  = self.get_colour(colourToSeek, invert)
 
     if not invert:
       if now > last:
@@ -147,7 +149,7 @@ class TraversalEnv():
     left  = self.get_colour(colourToSeek, invert)
 
     self.bk(BRANCH_LENGTH)
-    self._robot.rt(BRANCH_ANGLE * 2)
+    self._robot.rt(BRANCH_ANGLE)
     if not self.fd(BRANCH_LENGTH):
       # clear buffers
       self.poll_sensors()
@@ -163,7 +165,7 @@ class TraversalEnv():
       if start > left and start > right:
         # turn around
         self.bk(BRANCH_LENGTH)
-        self._robot.rt(180 - BRANCH_ANGLE)
+        self._robot.rt(180)
         self.fd(FORWARD_SPEED)
       else:
         if left > right: # turn left
@@ -176,12 +178,12 @@ class TraversalEnv():
       if start < left and start < right:
         # turn around
         self.bk(BRANCH_LENGTH)
-        self._robot.rt(180 - BRANCH_ANGLE)
+        self._robot.rt(180)
         self.fd(FORWARD_SPEED)
       else:
         if left < right: # turn left
           self.bk(BRANCH_LENGTH)
-          self._robot.lt(BRANCH_ANGLE * 2)
+          self._robot.lt(BRANCH_ANGLE)
           self.fd(FORWARD_SPEED)
         else:
           self.fd(FORWARD_SPEED)
