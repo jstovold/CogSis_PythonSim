@@ -1,8 +1,8 @@
 import pyCDM
 import cmm
-import turtle3 as cdmTurtle
+import turtle4 as cdmTurtle
 import patch_turtle_image
-import robotTurtle 
+import robotTurtle
 import time
 import math
 import threading
@@ -26,11 +26,11 @@ class CDMEnv():
   _tickRate 	= 5
   _ticks	= 0
   _arenaWidth   = 0  # these store the scaled size of the arena
-  _arenaHeight  = 0 
+  _arenaHeight  = 0
   def __init__(self, arenaWidth = 60, arenaHeight = 60, scale = 1.0):
-    self._screen = cdmTurtle.Screen().setup(width = arenaWidth * scale, 
+    self._screen = cdmTurtle.Screen().setup(width = arenaWidth * scale,
 					    height = arenaHeight * scale,
-					    startx = 250 * scale, 
+					    startx = 250 * scale,
 					    starty = None)
     self._arenaWidth  = arenaWidth * scale
     self._arenaHeight = arenaHeight * scale
@@ -40,7 +40,7 @@ class CDMEnv():
     cdmTurtle.setworldcoordinates(llx, lly, urx, ury)
     cdmTurtle.bgpic('core/src/bgimage.jpg')
     #cdmTurtle.mode('logo')
-    self._cdm 	  = pyCDM.pyCDM('/Users/jamesstovold/Documents/Code/CDM_PythonSim/native/target/libCDMSim.so')
+    self._cdm 	  = pyCDM.pyCDM('./native/target/libCDMSim.so')
     self._ticks   = 0
     i = 0
     returnArr = self._cdm.getCurrentXY()
@@ -53,7 +53,7 @@ class CDMEnv():
       turtle.setpos(x * scale,y * scale)
       turtle.setheading(h)
       self._turtles.append(turtle)
-      
+
   def __del__(self):
     del self._cdm
 
@@ -79,13 +79,13 @@ class RobotEnv():
   _robot  = None
   _ticks  = 0
   _cmm    = None
-  _cdm    = None  
-  
+  _cdm    = None
+
   _arenaWidth  = 0
   _arenaHeight = 0
   _scale       = 1.0
 
-  # need to store the turtle's environment in a bitmap image, then set that image as the turtle background to show what 
+  # need to store the turtle's environment in a bitmap image, then set that image as the turtle background to show what
   # is going on to the user
 
   ticksToSleepFor = 0
@@ -126,12 +126,12 @@ class RobotEnv():
 
 #    self._cmm.addAssociation([True, True], [True, False, False])
 
-    self._ticks  = 0;    
+    self._ticks  = 0;
     self.print("polling...")
     # make sure there are some values in the buffer and that we are connected to the CDM and the env
-    self.poll_sensors()  
+    self.poll_sensors()
     self.print("polling...")
-    self.poll_sensors()  
+    self.poll_sensors()
     self.print("polled.")
     self._robot.goto(-75 * 4, 30 * 4)
     self._robot.setheading(125)
@@ -184,7 +184,7 @@ class RobotEnv():
     fleeGreen = behaviour[1]
     fleeBlue  = behaviour[2]
     self.print("!behaviour" + str(behaviour), suppress=False)
-    
+
     self.move(seekRed, seekGreen, seekBlue, fleeRed, fleeGreen, fleeBlue)
     self.printChargeTemp()
     self._ticks += 1
@@ -207,8 +207,8 @@ class RobotEnv():
 
     # check IR sensors for walls
     #pass
-    
-    # get current charge of robot (yes, I know this should be in python, but it's already been written in C++ and is 
+
+    # get current charge of robot (yes, I know this should be in python, but it's already been written in C++ and is
     # running, so may as well use it!)
     charge, temp = self._cdm._cdm.getChargeTemp()
 
@@ -224,14 +224,14 @@ class RobotEnv():
 
 
   def sleep(self, timeToSleep):
-    # used in place of time.sleep() so that we can continue running certain parts of the code while other parts are 
+    # used in place of time.sleep() so that we can continue running certain parts of the code while other parts are
     # sleeping without having to argue with multi-threading
     self.ticksToSleepFor += timeToSleep
     self.sleeping         = True
 
 
   def move(self, seekRed, seekGreen, seekBlue, fleeRed, fleeGreen, fleeBlue):
-    # this method needs writing and calibrating according to the real robot characteristics (see page 100-101 of 
+    # this method needs writing and calibrating according to the real robot characteristics (see page 100-101 of
     # thesis)
     self.print("move")
     # need chromotaxis algorithm implementing here, then we can calibrate according to empirical data
@@ -250,7 +250,7 @@ class RobotEnv():
     else:
       self.fd(FORWARD_SPEED)
 
-#   if (self.charging and self.wantCharge) or (self.cooling and self.avoidTemp): 
+#   if (self.charging and self.wantCharge) or (self.cooling and self.avoidTemp):
     if (self.charging and self.wantCharge) or (not self.cooling and self.avoidTemp):  # seekTemp, obviously
       self.sleep(SLEEP_TIME)
 
@@ -318,12 +318,12 @@ class RobotEnv():
       self.poll_sensors()
       return
     right = self.get_colour(colourToSeek, invert)
-      
+
 #    self.bk(BRANCH_LENGTH)
-    # if we run the above, we should be back where we started, facing the same direction, but we don't because if 
+    # if we run the above, we should be back where we started, facing the same direction, but we don't because if
     # this is the direction we want to go in then it doesn't make sense to reverse again
 
-    if not invert:      
+    if not invert:
       if start > left and start > right:
         # turn around
         self.bk(BRANCH_LENGTH)
@@ -349,9 +349,9 @@ class RobotEnv():
           self.fd(FORWARD_SPEED)
         else:
           self.fd(FORWARD_SPEED)
-        
 
-  # override robot fd/bk commands to allow the avoid collisions function to subsume the behaviour accordingly 
+
+  # override robot fd/bk commands to allow the avoid collisions function to subsume the behaviour accordingly
   # (subsume? be subsumed? whatever.)
 
   def fd(self, distance):
@@ -390,7 +390,7 @@ class RobotEnv():
   def avoid_collisions(self, distance = 0, invert=False):
     # if the robot gets within 10 of the wall, turn them away
     # tune the 10 according to behaviour
-    
+
     b       = 10    # boundary size
 
     x       = self._robot.xcor()
@@ -398,7 +398,7 @@ class RobotEnv():
     w       = self._arenaWidth
     h       = self._arenaHeight
     heading = self._robot.heading()
-    
+
     if invert:
       heading += 180.0
       if heading > 360.0:
@@ -487,7 +487,6 @@ class RobotEnv():
       self._robot.color(self.cLED)
       self.cLED = None
 
-    
 
 
 
@@ -498,7 +497,7 @@ def main():
     robotEnv = RobotEnv(cdmEnv, scale = 4.0, startx = 25);
 
     while(1):
-      cdmEnv.tick()  
+      cdmEnv.tick()
       robotEnv.tick()
 
 
