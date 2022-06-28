@@ -3,7 +3,8 @@ import time
 import math
 import random
 
-FORWARD_SPEED = 5
+FORWARD_SPEED = 10
+AVOID_TICKS   = 3
 
 RED   = 0
 GREEN = 1
@@ -85,6 +86,7 @@ class TraversalEnv():
     self.poll_sensors()
     self.avoid_collisions()
     self.move()
+    self._ticks += 1
 
   def move(self):
     self.seek_colour(BLUE)
@@ -98,13 +100,13 @@ class TraversalEnv():
     now  = self.get_colour(colourToSeek, invert)
 
     if not invert:
-      if now > last:
+      if now >= last:
         self.fd(FORWARD_SPEED)
         #self.sleep(SLEEP_TIME)
       else:
         self.check_direction(colourToSeek, invert)
     else:
-      if now < last:
+      if now <= last:
         self.fd(FORWARD_SPEED)
         #self.sleep(SLEEP_TIME)
       else:
@@ -198,7 +200,7 @@ class TraversalEnv():
       return False
     else:
       self._robot.fd(distance * self._scale)
-      self._ticks += distance * self._scale
+      #self._ticks += distance * self._scale
       self.print("not cancelled fd")
       return True
 
@@ -210,7 +212,7 @@ class TraversalEnv():
       return False
     else:
       self._robot.bk(distance * self._scale)
-      self._ticks += distance * self._scale
+      #self._ticks += distance * self._scale
       self.print("not cancelled bk")
 
       return True
@@ -258,11 +260,12 @@ class TraversalEnv():
           self._robot.lt(90)
         if invert:
           self._robot.bk(FORWARD_SPEED * self._scale)
-          self._ticks += FORWARD_SPEED * self._scale
-
+          #self._ticks += FORWARD_SPEED * self._scale
+          self._ticks += AVOID_TICKS
         else:
           self._robot.fd(FORWARD_SPEED * self._scale)
-          self._ticks += FORWARD_SPEED * self._scale
+          #self._ticks += FORWARD_SPEED * self._scale
+          self._ticks += AVOID_TICKS
         return True
 
     if x < left:
@@ -273,10 +276,12 @@ class TraversalEnv():
           self._robot.lt(90)
         if invert:
           self._robot.bk(FORWARD_SPEED * self._scale)
-          self._ticks += FORWARD_SPEED * self._scale
+          #self._ticks += FORWARD_SPEED * self._scale
+          self._ticks += AVOID_TICKS
         else:
           self._robot.fd(FORWARD_SPEED * self._scale)
-          self._ticks += FORWARD_SPEED * self._scale
+          #self._ticks += FORWARD_SPEED * self._scale
+          self._ticks += AVOID_TICKS
         return True
 
     if y < bottom:
@@ -287,10 +292,12 @@ class TraversalEnv():
           self._robot.lt(90)
         if invert:
           self._robot.bk(FORWARD_SPEED * self._scale)
-          self._ticks += FORWARD_SPEED * self._scale
+          #self._ticks += FORWARD_SPEED * self._scale
+          self._ticks += AVOID_TICKS
         else:
           self._robot.fd(FORWARD_SPEED * self._scale)
-          self._ticks += FORWARD_SPEED * self._scale
+          #self._ticks += FORWARD_SPEED * self._scale
+          self._ticks += AVOID_TICKS
         return True
 
     if y > top:
@@ -301,10 +308,12 @@ class TraversalEnv():
           self._robot.lt(90)
         if invert:
           self._robot.bk(FORWARD_SPEED * self._scale)
-          self._ticks += FORWARD_SPEED * self._scale
+          #self._ticks += FORWARD_SPEED * self._scale
+          self._ticks += AVOID_TICKS
         else:
           self._robot.fd(FORWARD_SPEED * self._scale)
-          self._ticks += FORWARD_SPEED * self._scale
+          #self._ticks += FORWARD_SPEED * self._scale
+          self._ticks += AVOID_TICKS
         return True
 
 

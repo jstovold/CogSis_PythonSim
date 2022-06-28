@@ -217,9 +217,9 @@ class RobotEnv():
       self.all_stop = True
       self.centre_led(255,255,0) # yellow
 
-    if temp > 55:
+    if temp > 55 and False: # we don't actually want to stop for this setup, this is only for the conflict setup
       # overheated
-      self.all_stop = True
+      self.all_stop = True 
       self.centre_led(0,255,255) # cyan
 
 
@@ -256,17 +256,17 @@ class RobotEnv():
 
   def seekflee_colour_aux(self, colourToSeek, invert=False):
 
-    now  = self.get_colour(colourToSeek, invert)
     last = self.get_last_value(colourToSeek)
+    now  = self.get_colour(colourToSeek, invert)
 
     if not invert:
-      if now > last:
+      if now >= last:
         self.fd(FORWARD_SPEED)
         #self.sleep(SLEEP_TIME)
       else:
         self.check_direction(colourToSeek, invert)
     else:
-      if now < last:
+      if now <= last:
         self.fd(FORWARD_SPEED)
         #self.sleep(SLEEP_TIME)
       else:
@@ -299,7 +299,7 @@ class RobotEnv():
     return self.rgb[colourToSeek]
 
   def check_direction(self, colourToSeek, invert=False):
-    BRANCH_LENGTH  = 10
+    BRANCH_LENGTH  = 5
     BRANCH_ANGLE   = 35
 
     this_heading = self._robot.heading

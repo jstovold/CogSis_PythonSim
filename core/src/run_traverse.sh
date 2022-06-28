@@ -1,7 +1,7 @@
 #!/bin/bash -xe
 
-for i in {0..25}
+for i in {0..100}
 do
-  python3 traversal.py >> outputlog3.log
+  python3 traversal.py >> outputlog10c_leq.log
 done
 
