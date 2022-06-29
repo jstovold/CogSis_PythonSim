@@ -7,4 +7,8 @@ function cleanup {
 
 trap cleanup EXIT
 
-python3 core/src/CDMSim.py
+for i in {0..25}
+do
+  python3 core/src/CDMSim.py >> intervention.log
+  python3 core/src/RandomWalk.py >> control.log
+done
