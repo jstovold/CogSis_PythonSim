@@ -15,6 +15,9 @@ RED   = 0
 GREEN = 1
 BLUE  = 2
 
+#class CogSisTurtle(robotTurtle.Turtle):
+#  def __init__(self):
+#    super.__init__()
 
 class CDMEnv():
   _screen 	= None
@@ -25,7 +28,6 @@ class CDMEnv():
   _ticks	= 0
   _arenaWidth   = 0  # these store the scaled size of the arena
   _arenaHeight  = 0
-
   def __init__(self, arenaWidth = 60, arenaHeight = 60, scale = 1.0):
     self._screen = cdmTurtle.Screen().setup(width = arenaWidth * scale,
 					    height = arenaHeight * scale,
@@ -84,8 +86,8 @@ class RobotEnv():
   _arenaHeight = 0
   _scale       = 1.0
 
-  # need to store the turtle's environment in a bitmap image, then set that image as the 
-  # turtle background to show what is going on to the user
+  # need to store the turtle's environment in a bitmap image, then set that image as the turtle background to show what
+  # is going on to the user
 
   ticksToSleepFor = 0
   sleeping   = False
@@ -94,7 +96,6 @@ class RobotEnv():
   wantCharge = False
   charging   = False
   cooling    = False
-  wandering  = False
 
   last_rgb   = None
   rgb        = None
@@ -243,38 +244,30 @@ class RobotEnv():
     # this method needs writing and calibrating according to the real robot characteristics (see page 100-101 of
     # thesis)
     self.print("move")
+    self.fd(FORWARD_SPEED)
+    return
+    
     # need chromotaxis algorithm implementing here, then we can calibrate according to empirical data
     if seekRed:
       self.seek_colour(RED)
-      self.wandering = False
     elif seekGreen:
       self.seek_colour(GREEN)
-      self.wandering = False
     elif seekBlue:
       self.seek_colour(BLUE)
-      self.wandering = False
     elif fleeRed:
       self.flee_colour(RED)
-      self.wandering = False
     elif fleeGreen:
       self.flee_colour(GREEN)
-      self.wandering = False
     elif fleeBlue:
       self.flee_colour(BLUE)
-      self.wandering = False
     else:
       self.fd(FORWARD_SPEED)
-      self.wandering = True
 
 #   if (self.charging and self.wantCharge) or (self.cooling and self.avoidTemp):
     if (self.charging and self.wantCharge) or (not self.cooling and self.avoidTemp):  # seekTemp, obviously
-      #self.sleep(SLEEP_TIME)
-      pass
+      self.sleep(SLEEP_TIME)
 
   def seekflee_colour_aux(self, colourToSeek, invert=False):
-    if self.wandering:
-      self.check_direction(colourToSeek, invert)
-      return
 
     last = self.get_last_value(colourToSeek)
     now  = self.get_colour(colourToSeek, invert)
@@ -433,7 +426,9 @@ class RobotEnv():
     top     = (h // 2) - b
     bottom  = -top
 
-    self.print(x, y, x+dx, y + dy, heading, left, right, top, bottom, suppress=False)
+    self.print(x, y, x+dx, y + dy, heading, left, right, top, bottom)
+
+
 
     x       += dx
     y       += dy
@@ -530,6 +525,9 @@ class RobotEnv():
           self._robot.fd(FORWARD_SPEED * self._scale)
         return True
 
+
+
+
     if y > top:
       self.print("4", suppress=False)
       if heading < 90 or heading > 270:   # not already turned
@@ -546,7 +544,6 @@ class RobotEnv():
           self._robot.fd(FORWARD_SPEED * self._scale)
         return True
 
-  # all of these headings assume we are travelling forwards...
 
     return False
 
@@ -575,8 +572,10 @@ def main():
     while(not robotEnv.all_stop):
       cdmEnv.tick()
       robotEnv.tick()
+
     toc      = time.time_ns()
     print(toc - tic)
 
 if __name__ == "__main__":
   main()
+
