@@ -21,7 +21,7 @@ CDM *cdm;
 
 // simulation environment (values between 0 and 255)
 #define CHARGING_THRESHOLD      30
-#define TEMPERATURE_THRESHOLD   10
+#define TEMPERATURE_THRESHOLD   20
 //conflict:
 //#define TEMPERATURE_THRESHOLD   10
 
@@ -36,10 +36,10 @@ CDM *cdm;
 //#define TEMP_DECREASE_SPEED     0.8
 
 // deltas for non-conflict scenario
-#define DISCHARGE_SPEED         0.05
-#define CHARGING_SPEED          0.3
+#define DISCHARGE_SPEED         0.1
+#define CHARGING_SPEED          0.8
 #define TEMP_INCREASE_SPEED     1.8
-#define TEMP_DECREASE_SPEED     0.1
+#define TEMP_DECREASE_SPEED     0.5
 
 //Serial 	pc; // new Serial.h redirects this to a standard log file instead of the UART
 int	numAgents;
@@ -98,8 +98,8 @@ void CDM_Init::initialise_cdm() {
   sensorValues.push_back(temperature);
   sensorValues.push_back(charge);
   cdm->initializeEnvironment(2, sensorValues);
-  charge      = 3.0f;
-  temperature = 20.0f;
+  charge      = 5.0f;
+  temperature = 30.0f;
 
   // print out the environment to show that we are set up and ready to go
   printEnv();
