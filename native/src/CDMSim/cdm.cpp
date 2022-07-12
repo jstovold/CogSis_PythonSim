@@ -428,8 +428,10 @@
 	void CDM::updateEnvironment(vector<float> sensorValues)
 	{
 		// {temperature, charge}
-//		sensorValues[0] = max((sensorValues[0] / calibrationValues[0]) - 1.0f, 0.0f);
-		sensorValues[0] = max((calibrationValues[0] / (2 * sensorValues[0])) - 1.0f, 0.0f); // possibility for div/0 error here
+		// conflict setup:
+		sensorValues[0] = max((sensorValues[0] / calibrationValues[0]) - 1.0f, 0.0f);
+		// non-conflict setup:
+//		sensorValues[0] = max((calibrationValues[0] / (2 * sensorValues[0])) - 1.0f, 0.0f); // possibility for div/0 error here
 		sensorValues[1] = max((calibrationValues[1] / (2 * sensorValues[1])) - 1.0f, 0.0f); // possibility for div/0 error here
 		sensorValues.push_back(0.5f);
 //		for (int i = 0; i < sensorValues.size(); i++)

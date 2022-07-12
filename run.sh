@@ -7,6 +7,7 @@ function cleanup {
 
 trap cleanup EXIT
 
+
 for i in {0..25}
 do
   python3 core/src/CDMSim.py >> intervention.log

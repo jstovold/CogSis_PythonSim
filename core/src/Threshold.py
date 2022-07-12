@@ -8,7 +8,7 @@ import math
 import threading
 import random
 
-FORWARD_SPEED = 7
+FORWARD_SPEED = 5
 SLEEP_TIME    = 10
 
 RED   = 0
@@ -24,7 +24,7 @@ class CDMEnv():
   _scale	= 1.0
   _turtles	= []
   _cdm 		= None
-  _tickRate 	= 5
+  _tickRate 	= 2
   _ticks	= 0
   _arenaWidth   = 0  # these store the scaled size of the arena
   _arenaHeight  = 0
@@ -115,17 +115,17 @@ class RobotEnv():
     #self._robot.mode('logo')
 
     self._robot.addLightSource((0,10), 50, 'red')
-    self._robot.addLightSource((224,50), 50, 'blue')
+#    self._robot.addLightSource((224,50), 50, 'blue')
     self._screen = self._robot._screen
     self.print(self._screen)
 
     self._cmm    = cmm.cmm(2, 3)
 
     # cheat for now, build training later...
-    self._cmm.addAssociation([False, True], [False, False, True])
-    self._cmm.addAssociation([True, False], [True, False, False])
+#    self._cmm.addAssociation([False, True], [False, False, True])
+#    self._cmm.addAssociation([True, False], [True, False, False])
 
-#    self._cmm.addAssociation([True, True], [True, False, False])
+    self._cmm.addAssociation([True, True], [True, False, False])
 
     self._ticks  = 0;
     self.print("polling...")
@@ -180,8 +180,8 @@ class RobotEnv():
     if not(self.wantCharge or self.avoidTemp):
       self.centre_led(255,255,255)
 
-#    inputs    = [self.avoidTemp * -1, self.wantCharge * 1]
-    inputs    = [self.avoidTemp * 1, self.wantCharge * 1]
+    inputs    = [self.avoidTemp * -1, self.wantCharge * 1]
+#    inputs    = [self.avoidTemp * 1, self.wantCharge * 1]
     outputs   = self._cmm.recall(inputs)
     behaviour = self._cmm.thresholdResults(outputs, 1, False)
     #seekRed   = behaviour[0]
@@ -207,10 +207,10 @@ class RobotEnv():
     charge,temp = self._cdm._cdm.getChargeTemp()
 
     if charge < 2.5:
-      seekBlue = True
-
-    if temp < 20:
       seekRed = True
+
+    if temp > 25:
+      fleeRed = True
 
     self.move(seekRed, seekGreen, seekBlue, fleeRed, fleeGreen, fleeBlue)
     self.printChargeTemp()
@@ -244,8 +244,8 @@ class RobotEnv():
       self.all_stop = True
       self.centre_led(255,255,0) # yellow
 
-    if temp >= 60 and False:
-      # underheated
+    if temp >= 55:
+      # overheated
       self.all_stop = True 
       self.centre_led(0,255,255) # cyan
 
@@ -279,7 +279,7 @@ class RobotEnv():
       self.fd(FORWARD_SPEED)
 
 #   if (self.charging and self.wantCharge) or (self.cooling and self.avoidTemp):
-    if (self.charging and self.wantCharge) or (not self.cooling and self.avoidTemp):  # seekTemp, obviously
+    if False and ((self.charging and self.wantCharge) or (not self.cooling and self.avoidTemp)):  # seekTemp, obviously
       self.sleep(SLEEP_TIME)
 
   def seekflee_colour_aux(self, colourToSeek, invert=False):
